@@ -6,14 +6,18 @@ function game() {
     for (let i = 0; i < 5; i++) {
         // players make a choice each time
         const playerSelection = prompt('Choose rock, paper or scissors').toLowerCase();
+        // if player inputs invalid option, they are alerted and asked to re-enter choice.  i is reduced so that it does not get included in the 5 rounds
             if((playerSelection!=='rock')&&(playerSelection!=='paper')&&(playerSelection!=='scissors')){
                 alert('Only enter rock, paper or scissors');
                 i--;
             }
         const computerSelection = computerPlay();
+        // prints winning statement
         console.log(playRound(playerSelection, computerSelection));
+        //prints tally of wins
         console.log(`Player: ${playerWin}, Computer: ${computerWin}`);
     }
+    //if player's number of wins is greater than the computer's, player is declared the winner.  if computer's number of wins is greater, computer is declared the winner.  if tied, draw. 
     if(playerWin>computerWin){
         console.log('Player WINS!')
     }
@@ -23,6 +27,7 @@ function game() {
     else{
         console.log('Draw. Play Again')
     }
+    //asks player if she wants a rematch at the end of the 5 rounds
     const newGame=confirm("Rematch?");
     if (newGame===true){
         console.clear();
@@ -34,7 +39,7 @@ function game() {
 
 game();
 
-
+//random computer play
 function computerPlay(){
     let num=Math.floor(Math.random()*3)+1;
     if(num===3){
@@ -47,7 +52,7 @@ function computerPlay(){
         return 'Rock';
     }
 }
-
+//based on the player's choice and computer's choice, this function determines the winner and increases their tally of wins
 function playRound(playerSelection, computerSelection) {
     playerSelection=playerSelection.toLowerCase();
     computerSelection=computerSelection.toLowerCase();
