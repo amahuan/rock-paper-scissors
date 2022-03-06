@@ -46,7 +46,7 @@ function playRound(playerSelection) {
         if(computerWin===5){
             score+=`<br><br>COMPUTER WINS THE GAME.`;
             disableButtons();
-            addResetButton()
+            addResetButton();
         }
     }
     document.getElementById('results').textContent=results;
