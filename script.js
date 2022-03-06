@@ -1,43 +1,6 @@
 let playerWin=0;
 let computerWin=0;
-
-function game() {
-    //play a 5 round game
-    for (let i = 0; i < 5; i++) {
-        // players make a choice each time
-        const playerSelection = prompt('Choose rock, paper or scissors').toLowerCase();
-        // if player inputs invalid option, they are alerted and asked to re-enter choice.  i is reduced so that it does not get included in the 5 rounds
-            if((playerSelection!=='rock')&&(playerSelection!=='paper')&&(playerSelection!=='scissors')){
-                alert('Only enter rock, paper or scissors');
-                i--;
-            }
-        const computerSelection = computerPlay();
-        // prints winning statement
-        console.log(playRound(playerSelection, computerSelection));
-        //prints tally of wins
-        console.log(`Player: ${playerWin}, Computer: ${computerWin}`);
-    }
-    //if player's number of wins is greater than the computer's, player is declared the winner.  if computer's number of wins is greater, computer is declared the winner.  if tied, draw. 
-    if(playerWin>computerWin){
-        console.log('Player WINS!')
-    }
-    else if(playerWin<computerWin){
-        console.log('Computer WINS!')
-    }
-    else{
-        console.log('Draw. Play Again')
-    }
-    //asks player if she wants a rematch at the end of the 5 rounds
-    const newGame=confirm("Rematch?");
-    if (newGame===true){
-        console.clear();
-        playerWin=0;
-        computerWin=0;
-        game();
-    }
-}
-
-game();
+const buttons=document.querySelectorAll('button');
 
 //random computer play
 function computerPlay(){
@@ -53,40 +16,74 @@ function computerPlay(){
     }
 }
 //based on the player's choice and computer's choice, this function determines the winner and increases their tally of wins
-function playRound(playerSelection, computerSelection) {
-    playerSelection=playerSelection.toLowerCase();
-    computerSelection=computerSelection.toLowerCase();
-    if(playerSelection===computerSelection){
-        return "Draw, play again!";
+function playRound(playerSelection) {
+    let computerSelection = computerPlay();
+    var results='';
+    var score='';
+    if(playerSelection==computerSelection){
+        results+="Tie! Both player and computer drew " + playerSelection + ".";
+        score+=`Player: ${playerWin}
+        Computer: ${computerWin}`;       
     }
-    else if((playerSelection==='rock'&&computerSelection==='scissors')||(playerSelection==='paper'&&computerSelection==='rock')||(playerSelection==='scissors'&&computerSelection==='paper')){
-        playerWin++;
-        return "You win! " + playerSelection[0].toUpperCase()+playerSelection.slice(1,playerSelection.length) + " beats " + computerSelection[0].toUpperCase() + computerSelection.slice(1,computerSelection.length) +"!";
-    }
-    else if((playerSelection!=='rock')&&(playerSelection!=='paper')&&(playerSelection!=='scissors')){
-        return "Only enter valid item";
+    else if((playerSelection=='Rock'&&computerSelection=='Scissors')||(playerSelection=='Paper'&&computerSelection=='Rock')||(playerSelection=='Scissors'&&computerSelection=='Paper')){
+        playerWin+=1;
+        results+="Player wins this round! " + playerSelection + " beats " + computerSelection + "!";
+        score+=`Player: ${playerWin}
+        Computer: ${computerWin}`;
+        //once player reaches 5 wins, game ends and player has option to reset and play again
+        if(playerWin===5){
+            score+=`<br><br>PLAYER WINS THE GAME.`;
+            disableButtons();
+            addResetButton();
+        }
     }
     else {
-        computerWin++;
-        return "You lose! " + computerSelection[0].toUpperCase()+computerSelection.slice(1,computerSelection.length) + " beats " + playerSelection[0].toUpperCase()+playerSelection.slice(1,playerSelection.length) + "!";
+        computerWin+=1;
+        results+="You lose this round! " + computerSelection + " beats " + playerSelection + "!";
+        score+=`Player: ${playerWin}
+        Computer: ${computerWin}`;
+        //once computer reaches 5 wins, game ends and player has option to reset and play again
+        if(computerWin===5){
+            score+=`<br><br>COMPUTER WINS THE GAME.`;
+            disableButtons();
+            addResetButton()
+        }
     }
+    document.getElementById('results').textContent=results;
+    document.getElementById('outcome').innerHTML=score;
 }
-  
-//   const playerSelection = prompt("Rock, paper, scissors?");
-//   const computerSelection = computerPlay();
-//   console.log(computerSelection);
-//   console.log(playRound(playerSelection, computerSelection));
-
-
-// function playerResult(playerSelection){
-//     if(playerSelection==='rock'){return 1;}
-//     else if(playerSelection==='paper'){return 2;}
-//     else if(playerSelection==='scissors'){return 3;}
-// }
-
-// function computerResult(computerSelection) {
-//     if(computerSelection==='rock'){return 1;}
-//     else if(computerSelection==='paper'){return 2;}
-//     else if(computerSelection==='scissors'){return 3;}
-// }
-
+//adds eventListener for each of rock, paper and scissors buttons
+buttons.forEach((button) => {
+    button.addEventListener('click', function () {
+        playRound(button.id);
+      });
+    })
+//when the reset button is generated after the game and is clicked, all scores reset to 0 and score elements are blanked out
+function resetGame(){
+    playerWin=0;
+    computerWin=0;
+    document.getElementById('results').textContent='';
+    document.getElementById('outcome').innerHTML='';
+    reset.innerHTML='';
+    enableButtons();
+}
+//generates reset function at the end of the game
+function addResetButton(){
+    let resetButton;
+    const reset=document.querySelector('#reset');
+    reset.innerHTML='<button id="resetButton">RESET</button>';
+    resetButton=document.querySelector('#resetButton');
+    resetButton.addEventListener('click',resetGame);
+}
+//when game finishes, rock/paper/scissor buttons are disabled to prevent further clicking
+function disableButtons(){
+    buttons.forEach((button) => {
+        button.disabled=true;
+    });   
+}
+//when game is reset, rock/paper/scissor buttons are re-enabled
+function enableButtons(){
+    buttons.forEach((button) => {
+        button.disabled=false;
+    });   
+}
